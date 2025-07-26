@@ -1,0 +1,6 @@
+question,ground_truth_answer,context
+"What is the capital of France?","The capital of France is Paris.","France is a country in Western Europe. Its capital and largest city is Paris."
+"Who developed the theory of relativity?","Albert Einstein developed the theory of relativity.","The theory of relativity, which revolutionized physics, was formulated by Albert Einstein in the early 20th century."
+"What is the boiling point of water?","The boiling point of water is 100°C or 212°F at standard atmospheric pressure.","Water boils at 100 degrees Celsius (212 degrees Fahrenheit) at 1 atmosphere of pressure."
+"What is the largest planet in our solar system?","The largest planet in our solar system is Jupiter.","Jupiter is the fifth planet from the Sun and the largest in our solar system."
+"What language is primarily spoken in Brazil?","The primary language spoken in Brazil is Portuguese.","Brazil is the largest Portuguese-speaking country in the world."
