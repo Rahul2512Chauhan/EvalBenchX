@@ -1,0 +1,2 @@
+bleu,rouge1,rouge2,rougeL,bertscore
+0.303,0.4983,0.3371,0.4983,0.9238

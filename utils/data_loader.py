@@ -8,12 +8,13 @@ from config import (
     SUPPORTED_FORMATS
 )
 
-def load_dataset(file_path: Optional[str] = None) -> pd.DataFrame:
+def load_dataset(file_path: Optional[str] = None, max_rows: Optional[int] = None) -> pd.DataFrame:
     """
-    Load and validate a dataset file (CSV or JSON).
+    Load and validate a dataset file (CSV or JSON), with optional row limit.
     
     Parameters:
         file_path (str): Optional path to the dataset file. If not provided, uses default.
+        max_rows (int): Optional limit on number of rows to load.
         
     Returns:
         pd.DataFrame: Cleaned dataset with required and optional columns.
@@ -23,19 +24,19 @@ def load_dataset(file_path: Optional[str] = None) -> pd.DataFrame:
         ValueError: If format unsupported or required columns missing
     """
 
-    #use default if no file path given
+    # Use default path if not provided
     path = file_path or DEFAULT_DATA_PATH
 
-    #check file exists
+    # File existence check
     if not os.path.exists(path):
         raise FileNotFoundError(f"Dataset file not found: {path}")
     
-    #check file format
+    # Format check
     ext = os.path.splitext(path)[1]
     if ext not in SUPPORTED_FORMATS:
         raise ValueError(f"Unsupported file format: {ext}. Supported: {SUPPORTED_FORMATS}")
     
-    # Load CSV or JSON
+    # Load data based on format
     if ext == ".csv":
         df = pd.read_csv(path)
     elif ext == ".json":
@@ -43,20 +44,22 @@ def load_dataset(file_path: Optional[str] = None) -> pd.DataFrame:
     else:
         raise ValueError(f"Unsupported file format after extension check: {ext}")
 
+    # Limit rows if specified
+    if max_rows:
+        df = df.iloc[:max_rows]
 
-    #check for reuired columns
+    # Validate required columns
     missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
     if missing_cols:
         raise ValueError(f"Missing required columns: {missing_cols}")
     
-    #fill missing optional columns with empty strings
+    # Fill optional columns
     for col in OPTIONAL_COLUMNS:
         if col not in df.columns:
             df[col] = ""
 
-    #reorder coulmns
+    # Reorder columns
     final_cols = REQUIRED_COLUMNS + OPTIONAL_COLUMNS
     df = df[final_cols]
 
-    return df 
-    
+    return df
