@@ -1,6 +1,30 @@
-question,ground_truth_answer,context,generated_answer
-What is the capital of France?,The capital of France is Paris.,France is a country in Western Europe. Its capital and largest city is Paris.,The capital of France is Paris.
-Who developed the theory of relativity?,Albert Einstein developed the theory of relativity.,"The theory of relativity, which revolutionized physics, was formulated by Albert Einstein in the early 20th century.",Albert Einstein.
-What is the boiling point of water?,The boiling point of water is 100°C or 212°F at standard atmospheric pressure.,Water boils at 100 degrees Celsius (212 degrees Fahrenheit) at 1 atmosphere of pressure.,The boiling point of water is 100 degrees Celsius (212 degrees Fahrenheit) at 1 atmosphere of pressure.
-What is the largest planet in our solar system?,The largest planet in our solar system is Jupiter.,Jupiter is the fifth planet from the Sun and the largest in our solar system.,Jupiter.
-What language is primarily spoken in Brazil?,The primary language spoken in Brazil is Portuguese.,Brazil is the largest Portuguese-speaking country in the world.,Portuguese.
+question,generated_answer
+What is the capital of France?,The capital of France is Paris.
+Who developed the theory of relativity?,"The theory of relativity was developed by Albert Einstein, a German-born physicist who is widely regarded as one of the most influential scientists of the 20th century. Einstein's theory of relativity revolutionized our understanding of space and time, and it has had a profound impact on the development of modern physics and astronomy.
+
+Einstein's theory of relativity consists of two main components:
+
+1. Special Relativity (1905): This theory posits that the laws of physics are the same for all observers in uniform motion relative to one another. It also introduces the concept of time dilation, length contraction, and relativity of simultaneity.
+2. General Relativity (1915): This theory builds upon special relativity and introduces the concept of gravity as the curvature of spacetime caused by the presence of mass and energy. It also predicts phenomena such as gravitational waves and black holes.
+
+Einstein's theory of relativity was developed through a series of papers and lectures, and it was initially met with skepticism by some of his contemporaries. However, his ideas were later confirmed through a series of experiments and observations, and they have since become a cornerstone of modern physics.
+
+Some of the key predictions and consequences of Einstein's theory of relativity include:
+
+* Time dilation: Time appears to pass slower for an observer in motion relative to a stationary observer.
+* Length contraction: Objects appear shorter to an observer in motion relative to a stationary observer.
+* Relativity of simultaneity: Two events that are simultaneous for one observer may not be simultaneous for another observer in a different state of motion.
+* Gravitational redshift: Light is shifted towards the red end of the spectrum as it escapes from a gravitational field.
+* Gravitational waves: Ripples in spacetime that are produced by the acceleration of massive objects.
+* Black holes: Regions of spacetime where the gravitational pull is so strong that not even light can escape.
+
+Einstein's theory of relativity has had a profound impact on our understanding of the universe, and it has led to numerous breakthroughs in fields such as astrophysics, cosmology, and particle physics."
+What is the boiling point of water?,The boiling point of water is 100 degrees Celsius (°C) or 212 degrees Fahrenheit (°F) at standard atmospheric pressure.
+What is the largest planet in our solar system?,"The largest planet in our solar system is Jupiter. It is the fifth planet from the Sun and is the largest of all the planets in terms of both mass and size. It has a diameter of approximately 142,984 kilometers (88,846 miles), which is more than 11 times the diameter of the Earth.
+
+Jupiter is a gas giant, meaning that it is primarily composed of hydrogen and helium gases. It has a massive atmosphere with storm systems that can be thousands of kilometers wide, including the famous Great Red Spot, which is a persistent anticyclonic storm that has been raging for centuries.
+
+Jupiter's size and mass are so great that it is more than 2.5 times the mass of all the other planets in our solar system combined. It is also the planet with the strongest gravitational pull, which is why it has such a significant impact on the orbits of nearby planets and other objects in the solar system."
+What language is primarily spoken in Brazil?,"The official language of Brazil is Portuguese. It is the most widely spoken language in the country and is used as the primary language for government, education, media, and daily life. Brazilian Portuguese has some differences in pronunciation, vocabulary, and grammar compared to European Portuguese, but it is still considered a dialect of the Portuguese language.
+
+In addition to Portuguese, there are over 180 indigenous languages spoken by the country's indigenous population, as well as languages such as English, Spanish, and French, which are commonly taught in schools and used in business and tourism. However, Portuguese is the dominant language and is spoken by the vast majority of the population."
