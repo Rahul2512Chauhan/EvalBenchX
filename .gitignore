@@ -1,1 +1,9 @@
 .env
+main.py
+Project.pages
+.__pycache__
+.csv
+.DS_Store
+__pycache__
+.csv
+

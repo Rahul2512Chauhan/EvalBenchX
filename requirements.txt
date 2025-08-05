@@ -1,2 +1,7 @@
+evaluate 
+bert-score 
 pandas
-evaluate
+python-dotenv
+langchain
+langchain-groq
+langsmith

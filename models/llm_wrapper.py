@@ -1,56 +1,46 @@
-# models/llm_wrapper.py
-
 import os
-from typing import Any
 from dotenv import load_dotenv
-import openai
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage
+from langchain_core.tracers import LangChainTracer
 
-# ---------- 🔧 Load .env -----------
+#load .env 
 load_dotenv()
 
-# ----------🔧 Load configuration-----------
-PROVIDER = os.getenv("PROVIDER", "groq").lower()
-MODEL = os.getenv("MODEL", "llama3-70b-8192")
-TEMPERATURE = float(os.getenv("TEMPERATURE", 0.2))
+#steup llm with tracing automatically enabled
+llm = ChatGroq(
+    temperature=0.2,#creativity
+    model="llama3-8b-8192",
+    streaming=False
+)
 
-# ---------- 🔑 Set API keys & base URLs -----------
-if PROVIDER == "openai":
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    openai.base_url = "https://api.openai.com/v1"
-
-elif PROVIDER == "groq":
-    openai.api_key = os.getenv("GROQ_API_KEY")
-    openai.base_url = "https://api.groq.com/openai/v1/"
-
-elif PROVIDER == "together":
-    openai.api_key = os.getenv("TOGETHER_API_KEY")
-    openai.base_url = "https://api.together.xyz/v1/"
-
-else:
-    raise ValueError(f"Unsupported provider: {PROVIDER}")
-
-# ---------- 🧠 Unified LLM call function -----------
-def get_completion(prompt: str, model: str = MODEL, temperature: float = TEMPERATURE) -> str:
+def get_llm_response(prompt: str) -> str:
     """
-    Send prompt to selected LLM provider and return response text.
-
-    Args:
-        prompt (str): The input prompt for the LLM
-        model (str): Model to use (default comes from env)
-        temperature (float): Sampling temperature (0 = deterministic)
-
-    Returns:
-        str: The LLM's response
+    Calls the Groq LLM and returns the output as a clean string.
+    LangSmith tracing is automatically enabled.
     """
     try:
-        response = openai.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=temperature,
-            max_tokens=512,
-        )
-        return response.choices[0].message.content.strip() # type: ignore
+        messages = [HumanMessage(content=prompt)]
+        response = llm.invoke(messages)
+
+        # Normalize content
+        content = response.content
+        if isinstance(content, str):
+            return content
+        elif isinstance(content, list):
+            # Flatten list of strings or extract from dicts
+            parts = []
+            for item in content:
+                if isinstance(item, str):
+                    parts.append(item)
+                elif isinstance(item, dict) and "text" in item:
+                    parts.append(item["text"])
+            return " ".join(parts).strip()
+        else:
+            return str(content)
 
     except Exception as e:
-        print(f"❌ LLM call failed via {PROVIDER}: {e}")
-        return "[ERROR]"
+        print(f"❌ LLM call failed: {e}")
+        return "Error: LLM call failed"
+
+

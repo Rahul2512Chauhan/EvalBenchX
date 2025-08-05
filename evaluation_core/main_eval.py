@@ -1,63 +1,67 @@
 import argparse
 import os
 import pandas as pd
+from typing import List
 
 from utils.data_loader import load_dataset
 from evaluation_core.evaluator import evaluate_outputs
+from models.llm_wrapper import get_llm_response  # LLM with LangSmith tracing
 
-# ---------- 🎯 CLI Argument Parser ----------
-def parser_args():
-    parser = argparse.ArgumentParser(description="🔍 Evaluate LLM-generated outputs using different metrics.")
-    parser.add_argument("data_path", type=str, help="Path to the original dataset CSV (with ground truth labels).")
-    parser.add_argument("--generated-path", type=str, default="outputs/generated_answers.csv", help="Path to generated answers CSV.")
-    parser.add_argument("--metrics", nargs="+", default=["bleu", "rouge"], help="Metrics to evaluate with: bleu, rouge, bertscore")
-    parser.add_argument("--max-rows", type=int, default=None, help="Limit evaluation to N rows")
-
+# ----------  CLI Argument Parser ----------
+def parse_args():
+    parser = argparse.ArgumentParser(description="🔍 Evaluate LLM-generated outputs with LangSmith tracing.")
+    parser.add_argument("data_path", type=str, help="Path to original dataset CSV (must have question + ground_truth_answer).")
+    parser.add_argument("--metrics", nargs="+", default=["bleu", "rouge"], help="Metrics to evaluate: bleu, rouge, bertscore.")
+    parser.add_argument("--max-rows", type=int, default=None, help="Limit number of rows to evaluate.")
+    parser.add_argument("--output-dir", type=str, default="outputs", help="Directory to save outputs.")
     return parser.parse_args()
 
-# ---------- 🚀 Main Evaluation Pipeline ----------
+# ----------  Generate answers using LLM + LangSmith ----------
+def generate_answers(questions: List[str]) -> List[str]:
+    responses = []
+    for q in questions:
+        try:
+            answer = get_llm_response(q)
+        except Exception as e:
+            print(f"[⚠️] Error generating response for: {q[:50]}... → {str(e)}")
+            answer = ""
+        responses.append(answer)
+    return responses
+
+# ----------  Main Evaluation Pipeline ----------
 def main():
-    args = parser_args()
+    args = parse_args()
 
-    print("\n🧪 Starting evaluation with metrics:", ", ".join(args.metrics))
+    print(f"\n📂 Loading dataset from: {args.data_path}")
+    df = load_dataset(args.data_path, max_rows=args.max_rows)
 
-    # Load datasets with optional row limit
-    df_original = load_dataset(args.data_path, max_rows=args.max_rows)
-    df_generated = pd.read_csv(args.generated_path)
+    if "question" not in df.columns or "ground_truth_answer" not in df.columns:
+        raise ValueError("CSV must contain 'question' and 'ground_truth_answer' columns.")
 
-    # Check required columns
-    if "generated_answer" not in df_generated.columns:
-        raise ValueError("CSV must contain 'generated_answer' column.")
+    questions = df["question"].fillna("").astype(str).tolist()
+    references = df["ground_truth_answer"].fillna("").astype(str).tolist()
 
-    if "question" not in df_original.columns or "ground_truth_answer" not in df_original.columns:
-        raise ValueError("Original CSV must contain 'question' and 'ground_truth_answer' columns.")
+    print(f"✍️ Generating answers for {len(questions)} questions using LLM...\n")
+    predictions = generate_answers(questions)
 
-    # Merge ground truth and generated answers
-    df_eval = df_original.copy()
-    df_eval["generated_answer"] = df_generated["generated_answer"].values[:len(df_eval)]
+    # Save generations
+    os.makedirs(args.output_dir, exist_ok=True)
+    gen_path = os.path.join(args.output_dir, "generated_answers.csv")
+    pd.DataFrame({"question": questions, "generated_answer": predictions}).to_csv(gen_path, index=False)
+    print(f"\n💾 Generated answers saved to: {gen_path}")
 
+    # Run evaluations
+    print(f"\n🧪 Evaluating with metrics: {', '.join(args.metrics)}")
+    scores = evaluate_outputs(predictions=predictions, references=references, metrics=args.metrics)
 
-    # Evaluate
-    scores = evaluate_outputs(
-    predictions=df_eval["generated_answer"].tolist(),
-    references=df_eval["ground_truth_answer"].tolist(),
-    metrics=args.metrics
-)
-
-
-    # Print scores nicely
     print("\n📊 Evaluation Scores:")
     for metric, value in scores.items():
-        if isinstance(value, float):
-            print(f"🔹 {metric.upper()}: {value:.4f}")
-        else:
-            print(f"🔹 {metric.upper()}: {value}")
+        print(f"🔹 {metric.upper()}: {value:.4f}" if isinstance(value, float) else f"🔹 {metric.upper()}: {value}")
 
-    # Save results
-    os.makedirs("outputs", exist_ok=True)
-    output_path = "outputs/evaluation_scores.csv"
-    pd.DataFrame([scores]).to_csv(output_path, index=False)
-    print(f"\n💾 Evaluation results saved to: {output_path}\n")
+    # Save scores
+    eval_path = os.path.join(args.output_dir, "evaluation_scores.csv")
+    pd.DataFrame([scores]).to_csv(eval_path, index=False)
+    print(f"\n💾 Evaluation results saved to: {eval_path}\n")
 
 if __name__ == "__main__":
     main()
